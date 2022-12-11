@@ -94,7 +94,7 @@ class Snake():
                     self.turn(self.keyboard[3])
         
     def evil_action(self):
-        action = random.randint(0,4)
+        action = random.randint(0,6)
 
         if action == 0:
             self.speed += 5
@@ -106,6 +106,10 @@ class Snake():
             self.reset()
         elif action == 4:
             self.keyboard = [down,up,right,left]
+        elif action == 5:
+            self.score += 10
+        elif action == 6:
+            pass
         
 
 class Fish():
