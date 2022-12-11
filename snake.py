@@ -11,6 +11,11 @@ class Snake():
         # Special thanks to YouTubers Mini - Cafetos and Knivens Beast for raising this issue!
         # Code adjustment courtesy of YouTuber Elija de Hoog
         self.score = 0
+        self.speed = 10
+        self.keyboard = [up,down,left,right]
+
+    def get_speed(self):
+        return self.speed
 
     def get_head_position(self):
         return self.positions[0]
@@ -45,10 +50,10 @@ class Snake():
                 self.positions.pop()
 
     def reset(self):
-        self.length = 1
-        self.positions = [((screen_width/2), (screen_height/2))]
-        self.direction = random.choice([up, down, left, right])
-        self.score = 0
+        old_score = self.score
+        self.__init__()
+        self.score = min([old_score,self.score])
+        pygame.mixer.Sound.play(dead_sfx)
 
     def draw_body(self,surface):
         if self.length < 3:
@@ -80,15 +85,30 @@ class Snake():
                 sys.exit()
             elif event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_UP:
-                    self.turn(up)
+                    self.turn(self.keyboard[0])
                 elif event.key == pygame.K_DOWN:
-                    self.turn(down)
+                    self.turn(self.keyboard[1])
                 elif event.key == pygame.K_LEFT:
-                    self.turn(left)
+                    self.turn(self.keyboard[2])
                 elif event.key == pygame.K_RIGHT:
-                    self.turn(right)
+                    self.turn(self.keyboard[3])
+        
+    def evil_action(self):
+        action = random.randint(0,4)
 
-class Food():
+        if action == 0:
+            self.speed += 5
+        elif action == 1:
+            self.length += 5
+        elif action == 2:
+            self.score -= 10
+        elif action == 3:
+            self.reset()
+        elif action == 4:
+            self.keyboard = [down,up,right,left]
+        
+
+class Fish():
     def __init__(self):
         self.position = (0,0)
         self.color = (223, 163, 49)
@@ -102,12 +122,17 @@ class Food():
         pygame.draw.rect(surface, self.color, r)
         pygame.draw.rect(surface, (93, 216, 228), r, 1)
 
+    def get_position(self):
+        return self.position
+
+
+
 def drawBackground(surface):
     for y in range(0, int(grid_height)):
         for x in range(0, int(grid_width)):
-            
             r = pygame.Rect((x*gridsize, y*gridsize), (gridsize,gridsize))
-            pygame.draw.rect(surface,(228,228,228), r)
+            pygame.draw.rect(surface,(255,255,255), r)
+
 
 screen_width = 648
 screen_height = 648
@@ -121,9 +146,10 @@ down = (0,1)
 left = (-1,0)
 right = (1,0)
 
+
 def main():
     pygame.init()
-
+    
     clock = pygame.time.Clock()
     screen = pygame.display.set_mode((screen_width, screen_height), 0, 32)
 
@@ -135,29 +161,45 @@ def main():
     head = pygame.image.load('data/gfx/snake_head.jpg')
     body = pygame.image.load('data/gfx/snake_body.jpg')
     tail = pygame.image.load('data/gfx/snake_tail.jpg')
-    food = Food()
+    food = Fish()
     fish = pygame.image.load('data/gfx/fish.jpg')
+    evil_food = Fish()
+    evil_fish = pygame.image.load('data/gfx/fish_evil.jpg')
+
+    bad_sfx = pygame.mixer.Sound("data/sfx/Bad.wav")
+    food_sfx = pygame.mixer.Sound("data/sfx/Food.wav")
+    global dead_sfx 
+    dead_sfx = pygame.mixer.Sound("data/sfx/Dead.wav")
 
     myfont = pygame.font.SysFont("monospace",16)
 
     while (True):
-        clock.tick(10)
+        clock.tick(snake.get_speed())
         snake.handle_keys()
         drawBackground(surface)
         snake.move()
-        if snake.get_head_position() == food.position:
+        if snake.get_head_position() == food.get_position():
             snake.length += 1
             snake.score += 1
             food.randomize_position()
+            pygame.mixer.Sound.play(food_sfx)
+        elif snake.get_head_position() == evil_food.get_position():
+            snake.evil_action()
+            evil_food.randomize_position()
+            pygame.mixer.Sound.play(bad_sfx)
+            
         snake.draw_head(head)
         snake.draw_body(body)
         snake.draw_tail(tail)
+        food.draw(fish)
         food.draw(surface)
         screen.blit(surface, (0,0))
         screen.blit(head, snake.get_head_position())
         for block in snake.get_body_position():
             screen.blit(body, block)
         screen.blit(tail, snake.get_tail_position())
+        screen.blit(fish, food.get_position())
+        screen.blit(evil_fish, evil_food.get_position())
         text = myfont.render("Score {0}".format(snake.score), 1, (0,0,0))
         screen.blit(text, (5,10))
         pygame.display.update()
