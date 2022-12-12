@@ -259,18 +259,18 @@ def main():
     drawBackground(surface)
 
     snake = Snake()
-    head = pygame.image.load('/data/gfx/snake_head.jpg')
-    body = pygame.image.load('data/gfx/snake_body.jpg')
-    tail = pygame.image.load('data/gfx/snake_tail.jpg')
+    head = pygame.image.load('snake/data/gfx/snake_head.jpg')
+    body = pygame.image.load('snake/data/gfx/snake_body.jpg')
+    tail = pygame.image.load('snake/data/gfx/snake_tail.jpg')
     food = Fish()
-    fish = pygame.image.load('data/gfx/fish.jpg')
+    fish = pygame.image.load('snake/data/gfx/fish.jpg')
     evil_food = Fish()
-    evil_fish = pygame.image.load('data/gfx/fish_evil.jpg')
+    evil_fish = pygame.image.load('snake/data/gfx/fish_evil.jpg')
 
-    bad_sfx = pygame.mixer.Sound("data/sfx/Bad.wav")
-    food_sfx = pygame.mixer.Sound("data/sfx/Food.wav")
+    bad_sfx = pygame.mixer.Sound("snake/data/sfx/Bad.wav")
+    food_sfx = pygame.mixer.Sound("snake/data/sfx/Food.wav")
     global dead_sfx 
-    dead_sfx = pygame.mixer.Sound("data/sfx/Dead.wav")
+    dead_sfx = pygame.mixer.Sound("snake/data/sfx/Dead.wav")
 
     myfont = pygame.font.SysFont("monospace",16)
 
