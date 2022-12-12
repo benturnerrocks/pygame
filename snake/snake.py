@@ -259,7 +259,7 @@ def main():
     drawBackground(surface)
 
     snake = Snake()
-    head = pygame.image.load('data/gfx/snake_head.jpg')
+    head = pygame.image.load('/data/gfx/snake_head.jpg')
     body = pygame.image.load('data/gfx/snake_body.jpg')
     tail = pygame.image.load('data/gfx/snake_tail.jpg')
     food = Fish()
